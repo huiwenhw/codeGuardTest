@@ -19,11 +19,24 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.CalException;
 import sg.edu.nus.comp.cs4218.impl.app.CalApplication;
 
 public class CalTest {
+	private static final String MAR_2017_MON
+	= "     March 2017      \t" + System.lineSeparator()
+	+ "Mo Tu We Th Fr Sa Su \t" + System.lineSeparator()
+	+ "       1  2  3  4  5 \t" + System.lineSeparator()
+	+ " 6  7  8  9 10 11 12 \t" + System.lineSeparator()
+	+ "13 14 15 16 17 18 19 \t" + System.lineSeparator()
+	+ "20 21 22 23 24 25 26 \t" + System.lineSeparator()
+	+ "27 28 29 30 31       \t" + System.lineSeparator()
+	+ "                     \t" + System.lineSeparator() + System.lineSeparator();
 
+	private static final String FAIL_OUTPUT = "Exception was thrown";
+
+	
 	@Rule
 	public ExpectedException expectedEx = ExpectedException.none();
 
@@ -43,8 +56,10 @@ public class CalTest {
 
 	// Tests to Run
 	/*
-	 * @bug
+	 * @bug Error in their test case 
 	 * The expected string given is different from the arguments supplied to calApp.
+	 * Expected = January 2010 
+	 * Actual: December 2009 
 	 * They ran calApp using 12, 2009 but gave 01, 2010 as the expected result.
 	 */
 	@Test
@@ -60,7 +75,7 @@ public class CalTest {
 	}
 
 	/*
-	 * @bug
+	 * @bug Error in their test case 
 	 * The expected string and the result string is different 
 	 * Expected = March 2016 
 	 * Result = March 2017
@@ -76,7 +91,7 @@ public class CalTest {
 	}
 
 	/*
-	 * @bug
+	 * @bug Error in their test case 
 	 * The expected string and the result string is different 
 	 * Expected = March 2016 
 	 * Result = March 2017
@@ -90,6 +105,30 @@ public class CalTest {
 		String actual = calApplication.printCal(args);
 		assertEquals(expected, actual);
 	}
+
+	/*
+	 * start of my test cases 
+	 */
+
+	@Test
+	public void testWrongOutput() throws CalException {
+		String[] args = {"01", "12"};
+		String expected = "";
+		expected += "     January 12" + System.lineSeparator();
+		expected += "Su Mo Tu We Th Fr Sa" + System.lineSeparator();
+		expected += "                1  2" + System.lineSeparator();
+		expected += " 3  4  5  6  7  8  9" + System.lineSeparator();
+		expected += "10 11 12 13 14 15 16" + System.lineSeparator();
+		expected += "17 18 19 20 21 22 23" + System.lineSeparator();
+		expected += "24 25 26 27 28 29 30" + System.lineSeparator();
+		expected += "31" + System.lineSeparator();
+		calApplication.run(args, null, stdout);
+		assertEquals(expected, stdout.toString());
+	}
+	
+	/*
+	 * end of my test cases 
+	 */
 
 	@Test
 	public void testRunWithNullStdout() throws CalException {
@@ -203,7 +242,7 @@ public class CalTest {
 
 	// Tests for printCal
 	/*
-	 * @bug
+	 * @bug Error in their test case 
 	 * The expected string and the result string is different 
 	 * Expected = March 2016 
 	 * Result = March 2017
@@ -220,7 +259,7 @@ public class CalTest {
 
 	// Tests for printCalMondayFirst
 	/*
-	 * @bug
+	 * @bug Error in their test case 
 	 * The expected string and the result string is different 
 	 * Expected = March 2016 
 	 * Result = March 2017
@@ -237,7 +276,7 @@ public class CalTest {
 
 	// Tests for printCalForMonthYear
 	/*
-	 * @bug
+	 * @bug Error in their test case 
 	 * The spaces in front of the month is different 
 	 */
 	@Test
@@ -408,6 +447,11 @@ public class CalTest {
 	}
 
 	// Tests for printCalForYear
+	/*
+	 * @bug Error in their test case 
+	 * Expected string: Does not contain new line at the end 
+	 * Actual String: Contains new line at the end
+	 */
 	@Test
 	public void testPrintCalForYear() throws IOException {
 		String[] args = { "2016" };
@@ -508,7 +552,7 @@ public class CalTest {
 	}
 
 	/*
-	 * @bug 
+	 * @bug Error in their test case 
 	 * The path given to the test folder is wrong. 
 	 * Given: CurrentDirectory/resources/cal/test/filename
 	 * Should be: currentDirectory/resources.cal.test/filename
