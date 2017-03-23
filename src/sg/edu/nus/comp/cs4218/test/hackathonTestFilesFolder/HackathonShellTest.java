@@ -27,7 +27,7 @@ public class HackathonShellTest {
 	 * <call> ::=
  	 *        [ <whitespace> ] [ <redirection> <whitespace> ]* <argument>
      *        [ <whitespace> <atom> ]* [ <whitespace> ]
-     * allows for whitespaces
+     * The ENBF like specifications allows for whitespaces
 	 */
 	@Test
 	public void testSemicolonWithoutSpaceAfterArgument() throws AbstractApplicationException, ShellException {
