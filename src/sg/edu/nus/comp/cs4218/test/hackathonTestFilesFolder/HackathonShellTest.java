@@ -19,6 +19,15 @@ public class HackathonShellTest {
 	 * The bug is due to not handling the possibility of not having a space
 	 * between a semicolon operator and an argument with reference
 	 * to project description 7.1.4
+	 * Note: Understood that there is an assumption about this and it is not
+	 * a valid assumption as it assumes against the specification:
+	 * <command> ::= <call> | <seq> | <pipe>
+	 * <seq> ::= <command> “;” <command>
+	 * <pipe> ::= <call> “|” <call> | <pipe> “|” <call>
+	 * <call> ::=
+ 	 *        [ <whitespace> ] [ <redirection> <whitespace> ]* <argument>
+     *        [ <whitespace> <atom> ]* [ <whitespace> ]
+     * allows for whitespaces
 	 */
 	@Test
 	public void testSemicolonWithoutSpaceAfterArgument() throws AbstractApplicationException, ShellException {
@@ -32,6 +41,9 @@ public class HackathonShellTest {
 	 * if the first output would make it valid with reference to
 	 * project description 7.1.7 where the output of the left argument should
 	 * be piped to the right side
+	 * Note: Understood that there is an assumption that echo must have an argument
+	 * and in this case there is when the first result is piped over and so the
+	 * assumption does not apply in this case
 	 */
 	@Test
 	public void testPipingInvalidToValid() throws AbstractApplicationException, ShellException {
@@ -43,8 +55,7 @@ public class HackathonShellTest {
 	/**
 	 * The bug is due to not handling passing of any argument through piping
 	 * with reference to project description 7.1.7 where the output of the left argument should
-	 * be piped to the right side, multiple pipings bug omitted as it is duplicate of this,
-	 * i.e. run shell with "echo apple | echo | echo | echo" should result in apple
+	 * be piped to the right side
 	 */
 	@Test
 	public void testPipingPassesArguments() throws AbstractApplicationException, ShellException {
