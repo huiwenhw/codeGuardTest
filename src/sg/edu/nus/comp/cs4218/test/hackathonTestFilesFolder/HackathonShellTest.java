@@ -60,8 +60,35 @@ public class HackathonShellTest {
 	 */
 	@Test
 	public void testSubCommandWithPipe() throws AbstractApplicationException, ShellException {
-		shell.parseAndEvaluate("echo `echo apple` `echo banana` | echo", outputStream);
-		assertEquals("apple banana", outputStream.toString().trim());
+		shell.parseAndEvaluate("echo `echo apple` `echo banana` | echo sheeps", outputStream);
+		assertEquals("sheeps apple banana", outputStream.toString().trim());
+		outputStream.reset();
+	}
+
+	/**
+	 * The bug is due to not replacing new line characters during command substitution
+	 * into space characters with reference to 7.1.8 of the project description
+	 */
+	@Test
+	public void testSubCommandWithNewLine() throws AbstractApplicationException, ShellException {
+		shell.parseAndEvaluate("echo `echo \n space bananas`", outputStream);
+		assertEquals("space bananas", outputStream.toString().trim());
+		outputStream.reset();
+	}
+
+	/**
+	 * The bug is due to not treating the sub command as a shell command 
+	 * with reference to 7.1.8 of the project description
+	 * Note: There is already a bug where the first argument from a pipe is not passed to the
+	 * second part, this is not the same bug, i.e. this bug is about being able to evaluate
+	 * ```echo space faring | echo goats``` as a shell command in which just parsing and evaluating
+	 * ```echo space faring | echo goats``` without the backquotes works and returns ```goats``` (due to the
+	 * other bug), fixing both bugs should result in the below passing
+	 */
+	@Test
+	public void testPipingWithinCommandSub() throws AbstractApplicationException, ShellException {
+		shell.parseAndEvaluate("echo `echo space faring | echo goats`", outputStream);
+		assertEquals("goats space faring", outputStream.toString().trim());
 		outputStream.reset();
 	}
 }
