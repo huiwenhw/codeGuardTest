@@ -1,4 +1,4 @@
-package ef1test;
+package sg.edu.nus.comp.cs4218.test.hackathonTestFilesFolder;
 
 import static org.junit.Assert.*;
 
