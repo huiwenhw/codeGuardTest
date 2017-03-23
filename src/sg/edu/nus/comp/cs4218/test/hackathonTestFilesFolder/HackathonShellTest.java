@@ -3,6 +3,8 @@ package sg.edu.nus.comp.cs4218.test.hackathonTestFilesFolder;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
+
 import org.junit.Test;
 
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
@@ -26,6 +28,19 @@ public class HackathonShellTest {
 	}
 
 	/**
+	 * The bug is due to not handling argument-less commands after the pipe as valid
+	 * if the first output would make it valid with reference to
+	 * project description 7.1.7 where the output of the left argument should
+	 * be piped to the right side
+	 */
+	@Test
+	public void testPipingInvalidToValid() throws AbstractApplicationException, ShellException {
+		shell.parseAndEvaluate("echo banana | echo", outputStream);
+		assertEquals("banana", outputStream.toString().trim());
+		outputStream.reset();
+	}
+
+	/**
 	 * The bug is due to not handling passing of any argument through piping
 	 * with reference to project description 7.1.7 where the output of the left argument should
 	 * be piped to the right side, multiple pipings bug omitted as it is duplicate of this,
@@ -33,8 +48,8 @@ public class HackathonShellTest {
 	 */
 	@Test
 	public void testPipingPassesArguments() throws AbstractApplicationException, ShellException {
-		shell.parseAndEvaluate("echo banana | echo", outputStream);
-		assertEquals("banana", outputStream.toString().trim());
+		shell.parseAndEvaluate("echo banana | echo juice", outputStream);
+		assertEquals("juice banana", outputStream.toString().trim());
 		outputStream.reset();
 	}
 
@@ -70,8 +85,8 @@ public class HackathonShellTest {
 	 * into space characters with reference to 7.1.8 of the project description
 	 */
 	@Test
-	public void testSubCommandWithNewLine() throws AbstractApplicationException, ShellException {
-		shell.parseAndEvaluate("echo `echo \n space bananas`", outputStream);
+	public void testSubCommandWithNewLine() throws AbstractApplicationException, ShellException, UnsupportedEncodingException {
+		shell.parseAndEvaluate("echo `echo \\n space bananas`", outputStream);
 		assertEquals("space bananas", outputStream.toString().trim());
 		outputStream.reset();
 	}
@@ -89,6 +104,28 @@ public class HackathonShellTest {
 	public void testPipingWithinCommandSub() throws AbstractApplicationException, ShellException {
 		shell.parseAndEvaluate("echo `echo space faring | echo goats`", outputStream);
 		assertEquals("goats space faring", outputStream.toString().trim());
+		outputStream.reset();
+	}
+
+	/**
+	 * The bug is due to not being able to output the right amount of spaces
+	 * from double quoting with reference to 7.1.2 of the project description
+	 */
+	@Test
+	public void testDoubleQuotingShouldPreserveWhitespace() throws AbstractApplicationException, ShellException {
+		shell.parseAndEvaluate("echo \"This is space:`echo \" \"`.\"", outputStream);
+		assertEquals("This is space: .", outputStream.toString().trim());
+		outputStream.reset();
+	}
+
+	/**
+	 * The bug is due to not being able to ignore command substitution
+	 * from single quoting with reference to 7.1.2 of the project description
+	 */
+	@Test
+	public void testSingleQuotingShouldDisableCommandSubstitution() throws AbstractApplicationException, ShellException {
+		shell.parseAndEvaluate("echo 'This is space:`echo \" \"`.'", outputStream);
+		assertEquals("This is space:`echo \" \".", outputStream.toString().trim());
 		outputStream.reset();
 	}
 }
